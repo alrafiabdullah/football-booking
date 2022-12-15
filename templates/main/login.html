@@ -1,0 +1,27 @@
+{% extends 'main/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block cssblock %}
+    <link rel="stylesheet" href={% static 'main/login.css' %}>
+{% endblock cssblock %}
+
+{% block titleblock %}Player Login{% endblock titleblock %}
+
+{% block bodyblock %}
+<div class="basic-form login">
+    <form class="login-form" method="POST" action={% url 'player_login' %}>
+        <h1>Player Login</h1>
+        <hr>
+        {% csrf_token %}
+        {{ form | crispy }}
+        <button class="btn btn-info" type="submit">Login</button>
+    </form>
+
+    <div class="bottom">
+        <p>Don't have an account?</p>
+        <a href={% url 'player_register' %}><button class="btn btn-info">Register Here</button></a>
+    </div>
+</div>
+{% endblock bodyblock %}
+

@@ -1,0 +1,25 @@
+body {
+  margin: 0;
+  padding: 0;
+  color: teal;
+}
+
+h1 {
+  margin: 3%;
+}
+
+.basic-form {
+  color: teal;
+  width: auto;
+  height: 100%;
+  background: #f1f1f1;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.bottom {
+  margin-bottom: 5%;
+}

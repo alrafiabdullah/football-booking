@@ -1,0 +1,13 @@
+.register-form {
+  border: 2px solid teal;
+  margin: 5%;
+  padding: 10%;
+}
+
+#div_id_username,
+#div_id_email,
+#div_id_password1,
+#div_id_password2 {
+  border: 1px solid turquoise;
+  padding: 3%;
+}

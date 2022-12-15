@@ -1,0 +1,24 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block cssblock %}
+    <link rel="stylesheet" href={% static 'main/index.css' %}>
+{% endblock cssblock %}
+
+{% block titleblock %}
+Home
+{% endblock titleblock %}
+
+{% block bodyblock %}
+    <div class="container" align="center">
+        <h1>Hello World!</h1>
+        {% if messages %}
+            {% for message in messages %}
+                <p align="center" class="alert alert-success">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+
+        <p align="center">You are logged in as <strong>{{ request.user.username }}</strong></p>
+        <a href={% url 'player_logout' %} ><button class="btn btn-danger">Logout</button></a>
+    </div>
+{% endblock bodyblock %}
