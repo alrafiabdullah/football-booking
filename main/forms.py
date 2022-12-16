@@ -71,7 +71,7 @@ class CustomUserLoginForm(forms.Form):
 
         if username and password:
             user = User.objects.filter(username=username).first()
-            if not user.is_active:
+            if user is not None and not user.is_active:
                 raise forms.ValidationError(
                     'The account is not active. Please check your email and verify!')
             if user:
