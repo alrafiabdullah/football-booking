@@ -27,7 +27,7 @@ def index(request):
     import random
     total = random.randint(13, 23)
     for i in range(total):
-        place = Place.objects.first()
+        place = Place.objects.order_by('?').first()
         temp_list.append(place)
 
     paginator = Paginator(temp_list, 6)
