@@ -52,7 +52,7 @@ Home
                     </li>
                     <li class="page-item disabled">
                         <a class="page-link"
-                        href="#"tabindex="-1">Last</a>
+                        href="#"tabindex="-1">Previous</a>
                     </li>
                 {% endif %}
                 <li class="page-item">
@@ -74,14 +74,16 @@ Home
                     </li>
                 {% endif %}
             </ul>
-            <form action="?page=page" method="get">
-                <div class="input-group mb-3 col-xs-3">
-                    <input class="form-control" type="number" max="{{page_obj.paginator.num_pages}}" placeholder="1-{{page_obj.paginator.num_pages}}" name="page" min="1">
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-info" type="submit">Go</button>
+            {% if page_obj.paginator.num_pages > 3 %}
+                <form action="?page=page" method="get">
+                    <div class="input-group mb-3 col-xs-3">
+                        <input class="form-control" type="number" max="{{page_obj.paginator.num_pages}}" placeholder="1-{{page_obj.paginator.num_pages}}" name="page" min="1">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-info" type="submit">Go</button>
+                        </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            {% endif %}
         </nav>
 
         <a href={% url 'player_logout' %} ><button class="btn btn-danger">Logout</button></a>
