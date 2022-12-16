@@ -24,9 +24,10 @@ def handler500(request):
 @login_required(login_url='player_login')
 def index(request):
     temp_list = []
-
-    for i in range(100):
-        place = Place.objects.get(id=1)
+    import random
+    total = random.randint(13, 23)
+    for i in range(total):
+        place = Place.objects.first()
         temp_list.append(place)
 
     paginator = Paginator(temp_list, 6)
