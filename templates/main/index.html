@@ -14,9 +14,11 @@ Home
         <h1>Hello World!</h1>
         {% if messages %}
             {% for message in messages %}
-                <p align="center" class="alert alert-success">{{ message }}</p>
+                <p align="center" class="alert alert-{{message.tags}}">{{ message }}</p>
             {% endfor %}
         {% endif %}
+
+        <a href={% url 'about' %} ><button class="btn btn-info">About</button></a>
 
         <p align="center">You are logged in as <strong>{{ request.user.username }}</strong></p>
         <a href={% url 'player_logout' %} ><button class="btn btn-danger">Logout</button></a>

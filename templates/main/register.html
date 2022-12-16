@@ -11,6 +11,11 @@
 
 {% block bodyblock %}
 <div class="basic-form">
+    {% if messages %}
+        {% for message in messages %}
+            <p align="center" class="alert alert-{{message.tags}}">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
     <form class="register-form" method="POST" action={% url 'player_register' %}>
         <h1>Player Registration</h1>
         {% csrf_token %}

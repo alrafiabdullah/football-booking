@@ -10,6 +10,11 @@
 
 {% block bodyblock %}
 <div class="basic-form login">
+    {% if messages %}
+        {% for message in messages %}
+            <p align="center" class="alert alert-{{message.tags}}">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
     <form class="login-form" method="POST" action={% url 'player_login' %}>
         <h1>Player Login</h1>
         <hr>
