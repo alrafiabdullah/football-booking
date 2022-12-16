@@ -15,6 +15,7 @@ import socket
 
 from dotenv import load_dotenv
 from pathlib import Path
+from django.contrib import messages
 
 load_dotenv()
 
@@ -153,6 +154,15 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# set messages tag
+MESSAGE_TAGS = {
+    messages.DEBUG: 'info',
+    messages.INFO: 'info',
+    messages.SUCCESS: 'success',
+    messages.WARNING: 'warning',
+    messages.ERROR: 'danger'
+}
 
 ROBOTS_SITEMAP_URLS = [
     'https://football.abdullahalrafi.com.bd/sitemap.xml',
