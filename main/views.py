@@ -2,13 +2,12 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.contrib.sites.shortcuts import get_current_site
+from django.core.paginator import Paginator
 from django.shortcuts import redirect, render
-from django.urls import reverse
-from django.utils.encoding import (DjangoUnicodeDecodeError, force_bytes,
-                                   force_text)
-from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.utils.encoding import (force_text)
+from django.utils.http import urlsafe_base64_decode
 
+from .models import Place
 from .forms import CustomUserCreationForm, CustomUserLoginForm
 from .utils import account_activation_email_preparation, send_email_using_ses, welcome_email
 
@@ -24,7 +23,22 @@ def handler500(request):
 
 @login_required(login_url='player_login')
 def index(request):
-    return render(request, 'main/index.html')
+    temp_list = []
+
+    for i in range(100):
+        place = Place.objects.get(id=1)
+        temp_list.append(place)
+
+    paginator = Paginator(temp_list, 6)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'temp_list': temp_list,
+        'page_obj': page_obj,
+    }
+
+    return render(request, 'main/index.html', context=context)
 
 
 def register_player(request):
@@ -42,7 +56,7 @@ def register_player(request):
 
             # send verification email
             email_data = account_activation_email_preparation(request, user)
-            
+
             email_status = send_email_using_ses(
                 user.email, "Activate your account", email_data)
 
@@ -122,3 +136,12 @@ def logout_player(request):
 @ login_required(login_url='player_login')
 def about(request):
     return render(request, 'main/about.html')
+
+
+@ login_required(login_url='player_login')
+def player_profile(request):
+    user = User.objects.get(username=request.user.username)
+    context = {
+        'user': user,
+    }
+    return render(request, 'main/profile.html', context=context)
