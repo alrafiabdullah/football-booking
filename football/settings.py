@@ -47,9 +47,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
     'crispy_forms',
     'crispy_bootstrap5',
+    'robots',
 
     'main',
 ]
@@ -151,3 +153,10 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+ROBOTS_SITEMAP_URLS = [
+    'https://football.abdullahalrafi.com.bd/sitemap.xml',
+]
+
+ROBOTS_CACHE_TIMEOUT = 60*60*24
+SITE_ID = 1
