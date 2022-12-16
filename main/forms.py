@@ -43,6 +43,7 @@ class CustomUserCreationForm(UserCreationForm):
 
     def save(self, commit=True):
         user = super(CustomUserCreationForm, self).save(commit=False)
+        user.is_active = False
         user.email = self.cleaned_data['email']
         if commit:
             user.save()
@@ -70,6 +71,9 @@ class CustomUserLoginForm(forms.Form):
 
         if username and password:
             user = User.objects.filter(username=username).first()
+            if not user.is_active:
+                raise forms.ValidationError(
+                    'The account is not active. Please check your email and verify!')
             if user:
                 if not user.check_password(password):
                     raise forms.ValidationError('Invalid password')
