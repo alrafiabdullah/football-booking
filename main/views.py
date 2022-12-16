@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect
+# import FileResponse from django.http
+from django.http import FileResponse
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -23,7 +25,8 @@ def register_player(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Account created successfully')
+            messages.success(
+                request, 'Account created successfully!\nPlease login.')
             return redirect('index')
 
     return render(request, 'main/register.html', {'form': form})
@@ -54,5 +57,10 @@ def login_player(request):
 @login_required(login_url='player_login')
 def logout_player(request):
     logout(request)
-    messages.success(request, 'Logged out successfully')
+    messages.warning(request, 'Logged out successfully')
     return redirect('index')
+
+
+@login_required(login_url='player_login')
+def about(request):
+    return render(request, 'main/about.html')
