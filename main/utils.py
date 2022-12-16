@@ -9,6 +9,7 @@ from django.utils.encoding import (DjangoUnicodeDecodeError, force_bytes,
                                    force_text)
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.conf import settings
 
 
 class AppTokenGenerator(PasswordResetTokenGenerator):
@@ -21,18 +22,19 @@ token_generator = AppTokenGenerator()
 
 def account_activation_email_preparation(request, user):
     uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
-    domain = get_current_site(request).domain
     link = reverse("player_activate", kwargs={
         "uidb64": uidb64,
         "token": token_generator.make_token(user)
     })
 
-    activate_url = "http://" + domain + link
+    if settings.DEBUG:
+        activate_url = "http://127.0.0.1:8000" + link
+    else:
+        activate_url = "https://football.abdullahalrafi.com.bd" + link
 
     email_data = {
         "activate_url": activate_url,
         "username": user.username,
-        "body": "Activate your account by clicking the link below:\n" + activate_url,
         "body_html": open("templates/emails/account_activation.html").read()
     }
 
@@ -42,7 +44,6 @@ def account_activation_email_preparation(request, user):
 def welcome_email(user):
     email_data = {
         "username": user.username,
-        "body": "Welcome to the site! This site is mainly made to keep track our weekly football meetup. Previously, we had to miss a week of play due to miscommunication issue. Hopefully, this website will solve the problem. We hope you enjoy your stay. Cheers!",
         "body_html": open("templates/emails/welcome.html").read()
     }
 
@@ -50,6 +51,9 @@ def welcome_email(user):
 
 
 def send_email_using_ses(to_email, subject, email_data):
+    if "activate_url" not in email_data:
+        email_data["activate_url"] = ""
+
     region_name = os.getenv("AWS_REGION_NAME")
     access_key_id = os.getenv("AWS_ACCESS_KEY_ID")
     secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY")
@@ -61,31 +65,31 @@ def send_email_using_ses(to_email, subject, email_data):
                           aws_access_key_id=access_key_id,
                           aws_secret_access_key=secret_access_key)
 
-    try:
-        response = client.send_email(
-            Destination={
-                'ToAddresses': [
-                    to_email,
-                ],
+    # try:
+    response = client.send_email(
+        Destination={
+            'ToAddresses': [
+                to_email,
+            ],
+        },
+        Message={
+            'Subject': {
+                'Data': subject,
+                'Charset': CHARSET
             },
-            Message={
-                'Subject': {
-                    'Data': subject,
+            'Body': {
+                'Html': {
+                    'Data': email_data['body_html'].format(username=email_data['username'], activate_url=email_data['activate_url']),
                     'Charset': CHARSET
                 },
-                'Body': {
-                    'Html': {
-                        'Data': email_data['body_html'].format(body=email_data['body'], username=email_data['username']),
-                        'Charset': CHARSET
-                    },
-                    'Text': {
-                        'Data': email_data['body'],
-                        'Charset': CHARSET
-                    }
+                'Text': {
+                    'Data': email_data['body_html'],
+                    'Charset': CHARSET
                 }
-            },
-            Source=f'Football <{from_email}>',
-        )
-        return True
-    except:
-        return False
+            }
+        },
+        Source=f'Football <{from_email}>',
+    )
+    return True
+    # except:
+    #     return False
