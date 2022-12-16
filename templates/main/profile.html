@@ -1,0 +1,10 @@
+{% extends 'main/base.html' %}
+
+{% block titleblock %}Profile - {{request.user.username}}{% endblock titleblock %}
+
+
+{% block bodyblock %}
+<div>
+    <h1>{{request.user.username}}</h1>
+</div>
+{% endblock bodyblock %}
