@@ -8,6 +8,15 @@ from django.contrib.auth.decorators import login_required
 from .forms import CustomUserCreationForm, CustomUserLoginForm
 
 
+def handler404(request, exception):
+    messages.error(request, 'Requested page not found.')
+    return redirect('index')
+
+
+def handler500(request):
+    return render(request, 'main/500.html', status=500)
+
+
 @login_required(login_url='player_login')
 def index(request):
     return render(request, 'main/index.html')
