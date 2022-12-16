@@ -18,13 +18,13 @@ class CustomUserCreationForm(UserCreationForm):
     )
 
     password1 = forms.CharField(
-        max_length=30, min_length=4, required=True,
-        empty_value='password', label="Password", help_text='Your password can\'t be too similar to your other personal information. Your password must contain at least 4 characters. Your password can\'t be a commonly used password. Your password can\'t be entirely numeric.',
+        max_length=30, min_length=8, required=True,
+        empty_value='password', label="Password", help_text='Your password can\'t be too similar to your other personal information. Your password must contain at least 8 characters. Your password can\'t be a commonly used password. Your password can\'t be entirely numeric.',
         widget=forms.PasswordInput(attrs={'class': 'form-control register-item',
                                           'autocomplete': 'new-password'}),
     )
     password2 = forms.CharField(
-        max_length=30, min_length=4, required=True, help_text='Enter the same password as before.',
+        max_length=30, min_length=8, required=True, help_text='Enter the same password as before.',
         empty_value='password', label="Confirm Password",
         widget=forms.PasswordInput(attrs={'class': 'form-control',
                                           'autocomplete': 'new-password'})
