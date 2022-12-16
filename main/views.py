@@ -1,11 +1,16 @@
-from django.shortcuts import render, redirect
-# import FileResponse from django.http
-from django.http import FileResponse
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.contrib.sites.shortcuts import get_current_site
+from django.shortcuts import redirect, render
+from django.urls import reverse
+from django.utils.encoding import (DjangoUnicodeDecodeError, force_bytes,
+                                   force_text)
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 
 from .forms import CustomUserCreationForm, CustomUserLoginForm
+from .utils import account_activation_email_preparation, send_email_using_ses, welcome_email
 
 
 def handler404(request, exception):
@@ -33,12 +38,45 @@ def register_player(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save()
+
+            # send verification email
+            email_data = account_activation_email_preparation(request, user)
+            
+            email_status = send_email_using_ses(
+                user.email, "Activate your account", email_data)
+
+            if not email_status:
+                user.delete()
+                messages.error(
+                    request, 'There was an error sending the activation email. Please try again.')
+                return redirect('player_register')
+
             messages.success(
-                request, 'Account created successfully!\nPlease login.')
-            return redirect('index')
+                request, 'Account created successfully!\nPlease check your email and verify.')
+
+            return redirect('player_register')
 
     return render(request, 'main/register.html', {'form': form})
+
+
+def verify_activation_url(request, uidb64, token):
+    try:
+        user_id = force_text(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=user_id)
+
+        if user.is_active:
+            return redirect("player_login")
+
+        user.is_active = True
+        user.save()
+        messages.success(
+            request, "Account activated successfully. Please login!")
+        return redirect("player_login")
+
+    except:
+        messages.error(request, "Invalid activation link")
+        return redirect("player_register")
 
 
 def login_player(request):
@@ -53,7 +91,18 @@ def login_player(request):
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
-            user = authenticate(request, username=username, password=password)
+            user = authenticate(request, username=username,
+                                password=password)
+
+            if user.last_login is None:
+                email_data = welcome_email(user)
+                email_status = send_email_using_ses(
+                    user.email, "Welcome to Weekly Football!", email_data)
+
+                if not email_status:
+                    messages.error(
+                        request, 'There was an error sending the welcome email.')
+
             if user is not None:
                 login(request, user)
 
@@ -63,13 +112,13 @@ def login_player(request):
     return render(request, 'main/login.html', {'form': form})
 
 
-@login_required(login_url='player_login')
+@ login_required(login_url='player_login')
 def logout_player(request):
     logout(request)
     messages.warning(request, 'Logged out successfully')
     return redirect('index')
 
 
-@login_required(login_url='player_login')
+@ login_required(login_url='player_login')
 def about(request):
     return render(request, 'main/about.html')
