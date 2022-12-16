@@ -17,10 +17,73 @@ Home
                 <p align="center" class="alert alert-{{message.tags}}">{{ message }}</p>
             {% endfor %}
         {% endif %}
-
+        
+        <a href={% url 'player_profile' %} ><button class="btn btn-info">Profile</button></a>
         <a href={% url 'about' %} ><button class="btn btn-info">About</button></a>
-
         <p align="center">You are logged in as <strong>{{ request.user.username }}</strong></p>
+
+        <div class="card-container">
+            {% for temp in page_obj  %}
+                <div class="card-item">
+                    <div class="card text-black bg-info mb-3" style="max-width: 18rem;">
+                        <div class="card-header card-header-item"><strong>16 December 2022</strong></div>
+                        <div class="card-body">
+                            <h5 class="card-title" style="color: #9932CC;">Weekly Football</h5>
+                            <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum consectetur id doloremque totam magni dolor minus iste quod earum repudiandae.</p>
+                            <p class="card-footer"><strong>Map Link:</strong> <a href={{temp.map_link}} target="_blank" rel="noopener noreferrer"><button class="btn btn-primary">{{temp.name}}</button></a></p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link"href="?page=1"tabindex="-1">First</a>
+                    </li>
+                    <li class="page-item ">
+                        <a class="page-link"href="?page={{ page_obj.previous_page_number }}"tabindex="-1">Previous</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link"href="#"tabindex="-1">First</a>
+                    </li>
+                    <li class="page-item disabled">
+                        <a class="page-link"
+                        href="#"tabindex="-1">Last</a>
+                    </li>
+                {% endif %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.number }}">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</a>
+                </li>
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link"href="?page={{ page_obj.next_page_number }}"tabindex="-1">Next</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link"href="?page={{page_obj.paginator.num_pages}}"tabindex="-1">Last</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link"href="#"tabindex="-1">Next</a>
+                    </li>
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#"tabindex="-1">Last</a>
+                    </li>
+                {% endif %}
+            </ul>
+            <form action="?page=page" method="get">
+                <div class="input-group mb-3 col-xs-3">
+                    <input class="form-control" type="number" max="{{page_obj.paginator.num_pages}}" placeholder="1-{{page_obj.paginator.num_pages}}" name="page" min="1">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-info" type="submit">Go</button>
+                    </div>
+                </div>
+            </form>
+        </nav>
+
         <a href={% url 'player_logout' %} ><button class="btn btn-danger">Logout</button></a>
     </div>
 {% endblock bodyblock %}
