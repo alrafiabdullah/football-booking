@@ -13,4 +13,5 @@ urlpatterns = [
          views.verify_activation_url, name='player_activate'),
 
     path('about', views.about, name='about'),
+    path('profile', views.player_profile, name='player_profile'),
 ]
