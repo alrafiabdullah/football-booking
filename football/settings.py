@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
     'robots',
+    'captcha',
 
     'main',
 ]
@@ -170,3 +171,9 @@ ROBOTS_SITEMAP_URLS = [
 
 ROBOTS_CACHE_TIMEOUT = 60*60*24
 SITE_ID = 1
+
+
+RECAPTCHA_PUBLIC_KEY = os.getenv('RECAPTCHA_PUBLIC_KEY')
+RECAPTCHA_PRIVATE_KEY = os.getenv('RECAPTCHA_PRIVATE_KEY')
+RECAPTCHA_REQUIRED_SCORE = 0.99
+SILENCED_SYSTEM_CHECKS = ["captcha.recaptcha_test_key_error"]
