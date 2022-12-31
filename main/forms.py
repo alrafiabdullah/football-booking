@@ -2,6 +2,9 @@ from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 
+from captcha.fields import ReCaptchaField
+from captcha.widgets import ReCaptchaV2Checkbox, ReCaptchaV3
+
 
 class CustomUserCreationForm(UserCreationForm):
     username = forms.CharField(
@@ -29,6 +32,12 @@ class CustomUserCreationForm(UserCreationForm):
         widget=forms.PasswordInput(attrs={'class': 'form-control',
                                           'autocomplete': 'new-password'})
     )
+    captcha = ReCaptchaField(
+        widget=ReCaptchaV3(
+            attrs={
+                'data-theme': 'dark',
+            }
+        ), label="This form is protected by Google reCAPTCHA.")
 
     class Meta:
         model = User
