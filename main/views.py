@@ -71,6 +71,11 @@ def register_player(request):
                 request, 'Account created successfully!\nPlease check your email and verify.')
 
             return redirect('player_register')
+        else:
+            error_dict = dict(form.errors.items())
+            if "captcha" in error_dict:
+                messages.error(
+                    request, 'Please confirm you are not a robot.')
 
     return render(request, 'main/register.html', {'form': form})
 
